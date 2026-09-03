@@ -1,0 +1,260 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── ENUMS ───────────────────────────────────────────────────────────────────
+
+enum Role {
+  CUSTOMER
+  HELPER
+  ADMIN
+}
+
+enum BookingType {
+  INSTANT
+  MONTHLY
+  HALF_YEARLY
+  YEARLY
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum WorkPreference {
+  HOURLY
+  PART_TIME
+  FULL_TIME
+  LIVE_IN
+}
+
+enum VerificationStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+// ─── USER ────────────────────────────────────────────────────────────────────
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String?   @unique
+  phone         String    @unique
+  passwordHash  String?
+  role          Role      @default(CUSTOMER)
+  avatar        String?
+  language      String    @default("en")  // "en" or "hi"
+  city          String    @default("Bhilai")
+  area          String    @default("Risali Sector")
+  pincode       String    @default("490006")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  bookingsAsCustomer  Booking[]       @relation("CustomerBookings")
+  helperProfile       HelperProfile?
+  otpCodes            OtpCode[]
+  addresses           Address[]
+  reviews             Review[]
+
+  @@map("users")
+}
+
+// ─── OTP ─────────────────────────────────────────────────────────────────────
+
+model OtpCode {
+  id        String   @id @default(cuid())
+  phone     String
+  code      String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    String?
+
+  @@map("otp_codes")
+}
+
+// ─── HELPER PROFILE ──────────────────────────────────────────────────────────
+
+model HelperProfile {
+  id                String             @id @default(cuid())
+  userId            String             @unique
+  user              User               @relation(fields: [userId], references: [id])
+
+  bio               String?
+  bioHi             String?
+  gender            Gender
+  age               Int
+  experience        Int                @default(0)  // years
+  languages         String[]           @default(["Hindi"])
+
+  // Pricing (helper sets their own rates)
+  hourlyRate        Int                @default(149)   // ₹ per hour
+  monthlySalary     Int                @default(8000)  // ₹ per month
+
+  // Skills / Services offered (service IDs from our data)
+  serviceIds        String[]
+
+  // Work preferences
+  workPreference    WorkPreference[]
+
+  // Availability
+  isAvailable       Boolean            @default(true)
+  workingAreas      String[]           @default(["Risali Sector"]) // areas in Bhilai
+
+  // Verification — 3 Level System
+  adminVerified     Boolean            @default(false)      // Level 1: Admin ne personally dekha
+  adminVerifiedAt   DateTime?                               // Kab verify kiya
+
+  aadhaarNumber     String?                                 // Level 2: Aadhaar last 4 digits
+  aadhaarVerified   VerificationStatus @default(PENDING)    // PENDING/VERIFIED/REJECTED
+  aadhaarVerifiedAt DateTime?
+
+  policeVerified    Boolean            @default(false)      // Level 3: Police clearance
+  policeStation     String?                                 // Kaunse station se
+  policeCertDate    DateTime?                               // Certificate ki date
+  policeVerifiedAt  DateTime?
+
+  vaccinated        Boolean            @default(false)      // Bonus: vaccinated badge
+
+
+  // Stats
+  rating            Float              @default(0)
+  totalReviews      Int                @default(0)
+  totalBookings     Int                @default(0)
+
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  bookings          Booking[]
+  reviews           Review[]
+
+  @@map("helper_profiles")
+}
+
+// ─── ADDRESS ─────────────────────────────────────────────────────────────────
+
+model Address {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  tag       String   @default("Home")  // Home, Work, Other
+  flatNo    String
+  street    String
+  landmark  String?
+  area      String   @default("Risali Sector")
+  city      String   @default("Bhilai")
+  pincode   String   @default("490006")
+
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  bookings  Booking[]
+
+  @@map("addresses")
+}
+
+// ─── BOOKING ─────────────────────────────────────────────────────────────────
+
+model Booking {
+  id          String        @id @default(cuid())
+
+  // Who booked
+  customerId  String
+  customer    User          @relation("CustomerBookings", fields: [customerId], references: [id])
+
+  // Which helper
+  helperId    String?
+  helper      HelperProfile? @relation(fields: [helperId], references: [id])
+
+  // What service
+  serviceId   String        // maps to our services data (s1, s2, etc.)
+  serviceName String        // human readable name saved at booking time
+
+  // Booking details
+  type        BookingType
+  status      BookingStatus @default(PENDING)
+
+  // Schedule
+  scheduledDate DateTime
+  timeSlot      String?     // e.g., "09:00 AM"
+  durationHours Int?        // for instant bookings
+
+  // Address
+  addressId   String?
+  address     Address?      @relation(fields: [addressId], references: [id])
+
+  // Pricing (locked in at time of booking)
+  baseAmount  Int
+  serviceFee  Int           @default(49)
+  gstAmount   Int
+  totalAmount Int
+
+  specialInstructions String?
+  cancellationReason  String?
+
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  review      Review?
+
+  @@map("bookings")
+}
+
+// ─── REVIEW ──────────────────────────────────────────────────────────────────
+
+model Review {
+  id          String        @id @default(cuid())
+
+  bookingId   String        @unique
+  booking     Booking       @relation(fields: [bookingId], references: [id])
+
+  customerId  String
+  customer    User          @relation(fields: [customerId], references: [id])
+
+  helperId    String
+  helper      HelperProfile @relation(fields: [helperId], references: [id])
+
+  rating      Int           // 1-5
+  comment     String?
+  commentHi   String?
+
+  createdAt   DateTime      @default(now())
+
+  @@map("reviews")
+}
+
+// ─── SERVICE AREA (Bhilai Sectors) ───────────────────────────────────────────
+
+model ServiceArea {
+  id        String   @id @default(cuid())
+  name      String   @unique  // e.g., "Risali Sector"
+  nameHi    String?
+  city      String   @default("Bhilai")
+  pincode   String
+  active    Boolean  @default(true)
+
+  @@map("service_areas")
+}
