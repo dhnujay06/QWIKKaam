@@ -123,7 +123,7 @@ export default function Navbar() {
                 {t("Login", "लॉगिन")}
               </Link>
               <Link
-                href="/register"
+                href="/signup"
                 className="text-sm font-semibold text-white bg-amber-500 hover:bg-amber-600 px-4 py-2 rounded-lg transition-colors shadow-sm"
               >
                 {t("Register", "रजिस्टर")}
@@ -234,7 +234,7 @@ export default function Navbar() {
                     {t("Login", "लॉगिन")}
                   </Link>
                   <Link
-                    href="/register"
+                    href="/signup"
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="w-full text-center font-semibold text-white bg-amber-500 hover:bg-amber-600 px-4 py-3 rounded-lg transition-colors"
                   >
