@@ -39,10 +39,10 @@ export default function Navbar() {
             <Link href="/" className="group flex flex-col justify-center">
               <div className="flex items-center gap-1 text-2xl font-bold text-slate-900">
                 <Zap className="h-6 w-6 text-amber-500 fill-amber-500" />
-                Qwikaam
+                Qwikkaam
               </div>
               <span className="text-[10px] text-teal-600 font-medium opacity-0 group-hover:opacity-100 transition-opacity -mt-1 ml-7">
-                क्विकाम
+                क्विक्काम
               </span>
             </Link>
 
@@ -170,7 +170,7 @@ export default function Navbar() {
               <div className="p-4 flex justify-between items-center border-b border-slate-100">
                 <div className="flex items-center gap-1 text-xl font-bold text-slate-900">
                   <Zap className="h-5 w-5 text-amber-500 fill-amber-500" />
-                  Qwikaam
+                  Qwikkaam
                 </div>
                 <button
                   onClick={() => setIsMobileMenuOpen(false)}

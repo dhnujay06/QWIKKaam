@@ -14,7 +14,7 @@ const CATEGORIES = ["All", "Booking", "Pricing", "Safety", "Helpers", "Cancellat
 const MOCK_FAQS = [
   { id: 1, category: "Booking", q: "How do I book a helper?", a: "You can book a helper instantly from the Home page by selecting a service, time, and location. For permanent hires, browse the 'Helpers' section." },
   { id: 2, category: "Pricing", q: "Are there any hidden charges?", a: "No, all prices are transparently shown before booking. For permanent hires, you pay a one-time platform fee, and the salary is directly paid to the helper." },
-  { id: 3, category: "Safety", q: "Are the helpers verified?", a: "Yes, all Qwikaam helpers undergo strict background checks, including identity verification and past employment references." },
+  { id: 3, category: "Safety", q: "Are the helpers verified?", a: "Yes, all Qwikkaam helpers undergo strict background checks, including identity verification and past employment references." },
   { id: 4, category: "Cancellation", q: "Can I cancel my booking?", a: "Instant bookings can be cancelled for free up to 2 hours before the scheduled time. Permanent hire contracts have specific cancellation clauses outlined during hiring." },
   { id: 5, category: "Helpers", q: "What if I am not satisfied with the permanent helper?", a: "If you have opted for our 6-month or 1-year plan, we offer free replacements if you are not satisfied with the helper's performance." }
 ];

@@ -7,7 +7,7 @@ import Footer from "@/components/layout/Footer";
 import MobileBottomNav from "@/components/layout/MobileBottomNav";
 
 export const metadata: Metadata = {
-  title: "Qwikaam - Trusted House Help, Just a Click Away | क्विकाम",
+  title: "Qwikkaam - Trusted House Help, Just a Click Away | क्विक्काम",
   description: "Connecting you with verified and trusted house helps, cooks, cleaners, babysitters, and elderly care services in your city.",
 };
 

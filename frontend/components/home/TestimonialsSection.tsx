@@ -11,8 +11,8 @@ const MOCK_TESTIMONIALS = [
     name: 'Priya Sharma',
     location: 'Delhi',
     rating: 5,
-    textEn: 'Qwikaam made finding a reliable maid so easy. The background check feature gives me complete peace of mind. Highly recommended!',
-    textHi: 'क्विकाम ने एक विश्वसनीय नौकरानी खोजना बहुत आसान बना दिया। पृष्ठभूमि जाँच सुविधा मुझे पूरी मानसिक शांति देती है। अत्यधिक अनुशंसित!',
+    textEn: 'Qwikkaam made finding a reliable maid so easy. The background check feature gives me complete peace of mind. Highly recommended!',
+    textHi: 'क्विक्काम ने एक विश्वसनीय नौकरानी खोजना बहुत आसान बना दिया। पृष्ठभूमि जाँच सुविधा मुझे पूरी मानसिक शांति देती है। अत्यधिक अनुशंसित!',
   },
   {
     id: 2,
@@ -27,8 +27,8 @@ const MOCK_TESTIMONIALS = [
     name: 'Anjali Desai',
     location: 'Pune',
     rating: 4,
-    textEn: 'Found a full-time nanny through Qwikaam. The replacement guarantee is what sold me, though we haven\'t needed it!',
-    textHi: 'क्विकाम के माध्यम से एक फुल-टाइम नैनी मिली। प्रतिस्थापन गारंटी ही मुख्य कारण था, हालांकि हमें इसकी आवश्यकता नहीं हुई!',
+    textEn: 'Found a full-time nanny through Qwikkaam. The replacement guarantee is what sold me, though we haven\'t needed it!',
+    textHi: 'क्विक्काम के माध्यम से एक फुल-टाइम नैनी मिली। प्रतिस्थापन गारंटी ही मुख्य कारण था, हालांकि हमें इसकी आवश्यकता नहीं हुई!',
   }
 ];
 

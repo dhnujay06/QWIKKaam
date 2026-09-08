@@ -1,6 +1,6 @@
-# ⚙️ Qwikaam — Backend Architecture & APIs
+# ⚙️ Qwikkaam — Backend Architecture & APIs
 
-Yeh folder Qwikaam platform ke **Server-Side (APIs, Business Logic & Database)** ka poora code contain karta hai.
+Yeh folder Qwikkaam platform ke **Server-Side (APIs, Business Logic & Database)** ka poora code contain karta hai.
 
 ---
 

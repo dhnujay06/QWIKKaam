@@ -2,7 +2,7 @@ import NearbyHelpers from "@/components/nearby/NearbyHelpers";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Helpers Near Me | Qwikaam",
+  title: "Helpers Near Me | Qwikkaam",
   description: "Find verified house helpers near you in Risali Sector, Bhilai",
 };
 

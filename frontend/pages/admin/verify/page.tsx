@@ -108,7 +108,7 @@ export default function AdminVerifyPage() {
   const [policeInputs, setPoliceInputs] = useState<Record<string, { station: string; date: string }>>({});
 
   useEffect(() => {
-    if (!sessionStorage.getItem("qwikaam_admin")) { router.push("/admin"); return; }
+    if (!sessionStorage.getItem("qwikkaam_admin")) { router.push("/admin"); return; }
     fetchHelpers();
   }, []);
 

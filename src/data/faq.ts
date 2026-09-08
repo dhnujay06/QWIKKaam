@@ -25,8 +25,8 @@ export const faqs: FAQItem[] = [
   {
     question: 'How do I pay the helper?',
     questionHi: 'मैं हेल्पर को भुगतान कैसे करूं?',
-    answer: 'For instant services, you pay online through the Qwikaam app. For permanent hires, you pay the monthly salary directly to the helper, while the platform fee is paid online.',
-    answerHi: 'इंस्टेंट सेवाओं के लिए, आप क्विकाम ऐप के माध्यम से ऑनलाइन भुगतान करते हैं। स्थायी नियुक्तियों के लिए, आप मासिक वेतन सीधे हेल्पर को देते हैं, जबकि प्लेटफ़ॉर्म शुल्क का भुगतान ऑनलाइन किया जाता है।',
+    answer: 'For instant services, you pay online through the Qwikkaam app. For permanent hires, you pay the monthly salary directly to the helper, while the platform fee is paid online.',
+    answerHi: 'इंस्टेंट सेवाओं के लिए, आप क्विक्काम ऐप के माध्यम से ऑनलाइन भुगतान करते हैं। स्थायी नियुक्तियों के लिए, आप मासिक वेतन सीधे हेल्पर को देते हैं, जबकि प्लेटफ़ॉर्म शुल्क का भुगतान ऑनलाइन किया जाता है।',
     category: 'Pricing'
   },
   {

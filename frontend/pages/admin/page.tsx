@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Lock, Zap } from "lucide-react";
 
 // Simple admin PIN — change this to something secret!
-const ADMIN_PIN = "qwikaam@admin";
+const ADMIN_PIN = "qwikkaam@admin";
 
 export default function AdminLoginPage() {
   const [pin, setPin] = useState("");
@@ -20,7 +20,7 @@ export default function AdminLoginPage() {
     setTimeout(() => {
       if (pin === ADMIN_PIN) {
         // Save to sessionStorage
-        sessionStorage.setItem("qwikaam_admin", "true");
+        sessionStorage.setItem("qwikkaam_admin", "true");
         router.push("/admin/dashboard");
       } else {
         setError("Galat PIN hai! Dobara try karein.");
@@ -36,7 +36,7 @@ export default function AdminLoginPage() {
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 text-3xl font-bold text-teal-400 mb-2">
             <Zap className="w-8 h-8 fill-teal-400" />
-            Qwikaam
+            Qwikkaam
           </div>
           <p className="text-slate-400 text-sm">Admin Panel</p>
         </div>

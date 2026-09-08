@@ -8,14 +8,14 @@ export default function TermsPage() {
         <section className="mb-8">
           <h2 className="text-2xl font-semibold text-slate-900 mb-4">1. Introduction</h2>
           <p className="text-slate-600 leading-relaxed mb-4">
-            Welcome to Qwikaam. These Terms of Service ("Terms") govern your use of the Qwikaam website and mobile application (the "Platform"). By accessing or using the Platform, you agree to be bound by these Terms.
+            Welcome to Qwikkaam. These Terms of Service ("Terms") govern your use of the Qwikkaam website and mobile application (the "Platform"). By accessing or using the Platform, you agree to be bound by these Terms.
           </p>
         </section>
 
         <section className="mb-8">
           <h2 className="text-2xl font-semibold text-slate-900 mb-4">2. User Responsibilities</h2>
           <p className="text-slate-600 leading-relaxed mb-4">
-            As a user (Customer) of Qwikaam, you agree to:
+            As a user (Customer) of Qwikkaam, you agree to:
           </p>
           <ul className="list-disc pl-6 text-slate-600 space-y-2 mb-4">
             <li>Provide accurate and complete information during registration and booking.</li>
@@ -46,14 +46,14 @@ export default function TermsPage() {
         <section className="mb-8">
           <h2 className="text-2xl font-semibold text-slate-900 mb-4">5. Payment Terms</h2>
           <p className="text-slate-600 leading-relaxed mb-4">
-            All payments for instant bookings are processed securely through the Platform. For permanent hires, the Platform fee is paid to Qwikaam, while the Helper's monthly salary is negotiated and paid directly to the Helper by the Customer.
+            All payments for instant bookings are processed securely through the Platform. For permanent hires, the Platform fee is paid to Qwikkaam, while the Helper's monthly salary is negotiated and paid directly to the Helper by the Customer.
           </p>
         </section>
 
         <section className="mb-8">
           <h2 className="text-2xl font-semibold text-slate-900 mb-4">6. Contact Us</h2>
           <p className="text-slate-600 leading-relaxed">
-            If you have any questions about these Terms, please contact us at <a href="mailto:legal@qwikaam.com" className="text-teal-600 hover:underline">legal@qwikaam.com</a>.
+            If you have any questions about these Terms, please contact us at <a href="mailto:legal@qwikkaam.com" className="text-teal-600 hover:underline">legal@qwikkaam.com</a>.
           </p>
         </section>
       </div>

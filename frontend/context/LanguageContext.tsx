@@ -18,7 +18,7 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     setMounted(true);
-    const storedLang = localStorage.getItem('qwikaam_lang') as Language;
+    const storedLang = localStorage.getItem('qwikkaam_lang') as Language;
     if (storedLang && (storedLang === 'en' || storedLang === 'hi')) {
       setLanguageState(storedLang);
     }
@@ -26,7 +26,7 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
-    localStorage.setItem('qwikaam_lang', lang);
+    localStorage.setItem('qwikkaam_lang', lang);
   };
 
   const toggleLanguage = () => {

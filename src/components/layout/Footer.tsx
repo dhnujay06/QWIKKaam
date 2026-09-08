@@ -19,7 +19,7 @@ export default function Footer() {
           <div className="flex flex-col gap-4">
             <Link href="/" className="flex items-center gap-1 text-2xl font-bold text-white mb-2">
               <Zap className="h-6 w-6 text-amber-500 fill-amber-500" />
-              Qwikaam
+              Qwikkaam
             </Link>
             <p className="text-slate-400 text-sm leading-relaxed mb-4">
               {t(
@@ -141,7 +141,7 @@ export default function Footer() {
 
         <div className="border-t border-slate-800 pt-8 mt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-slate-500 text-sm">
-            © {new Date().getFullYear()} Qwikaam. {t("All rights reserved.", "सर्वाधिकार सुरक्षित।")}
+            © {new Date().getFullYear()} Qwikkaam. {t("All rights reserved.", "सर्वाधिकार सुरक्षित।")}
           </p>
           <p className="text-slate-500 text-sm flex items-center gap-1">
             {t("Made with", "भारत में")} <span className="text-red-500">❤️</span> {t("in India", "बनाया गया")}

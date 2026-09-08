@@ -39,7 +39,7 @@ export default function AdminAddHelperPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (typeof window !== "undefined" && !sessionStorage.getItem("qwikaam_admin")) {
+    if (typeof window !== "undefined" && !sessionStorage.getItem("qwikkaam_admin")) {
       router.push("/admin");
     }
   }, []);

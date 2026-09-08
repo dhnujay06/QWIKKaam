@@ -49,7 +49,7 @@ export const authOptions: NextAuthOptions = {
           user = await prisma.user.create({
             data: {
               phone: credentials.phone,
-              name: 'Qwikaam User',
+              name: 'Qwikkaam User',
               city: 'Bhilai',
               area: 'Risali Sector',
               pincode: '490006',

@@ -19,7 +19,7 @@ export default function DownloadAppCTA() {
               </div>
               
               <h2 className="text-3xl md:text-5xl font-bold mb-6 leading-tight">
-                {t('Download Qwikaam App', 'क्विकाम ऐप डाउनलोड करें')}
+                {t('Download Qwikkaam App', 'क्विक्काम ऐप डाउनलोड करें')}
               </h2>
               
               <p className="text-teal-100 text-lg mb-10 max-w-md leading-relaxed">

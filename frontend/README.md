@@ -1,6 +1,6 @@
-# 🎨 Qwikaam — Frontend Architecture
+# 🎨 Qwikkaam — Frontend Architecture
 
-Yeh folder Qwikaam platform ke **Client-Side (User Interface & Design)** ka poora code contain karta hai.
+Yeh folder Qwikkaam platform ke **Client-Side (User Interface & Design)** ka poora code contain karta hai.
 
 ---
 

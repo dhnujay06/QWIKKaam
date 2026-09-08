@@ -56,7 +56,7 @@ export default function PrivacyPage() {
         <section className="mb-8">
           <h2 className="text-2xl font-semibold text-slate-900 mb-4">6. Contact</h2>
           <p className="text-slate-600 leading-relaxed">
-            For any privacy-related questions, please email us at <a href="mailto:privacy@qwikaam.com" className="text-teal-600 hover:underline">privacy@qwikaam.com</a>.
+            For any privacy-related questions, please email us at <a href="mailto:privacy@qwikkaam.com" className="text-teal-600 hover:underline">privacy@qwikkaam.com</a>.
           </p>
         </section>
       </div>

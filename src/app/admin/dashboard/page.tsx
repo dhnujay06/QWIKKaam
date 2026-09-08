@@ -31,7 +31,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     // Check admin auth
     if (typeof window !== "undefined") {
-      if (!sessionStorage.getItem("qwikaam_admin")) {
+      if (!sessionStorage.getItem("qwikkaam_admin")) {
         router.push("/admin");
         return;
       }
@@ -57,7 +57,7 @@ export default function AdminDashboard() {
   };
 
   const handleLogout = () => {
-    sessionStorage.removeItem("qwikaam_admin");
+    sessionStorage.removeItem("qwikkaam_admin");
     router.push("/admin");
   };
 
@@ -80,7 +80,7 @@ export default function AdminDashboard() {
       <div className="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2 font-bold text-teal-400 text-xl">
           <Zap className="w-6 h-6 fill-teal-400" />
-          Qwikaam Admin
+          Qwikkaam Admin
         </div>
         <button
           onClick={handleLogout}

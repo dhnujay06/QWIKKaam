@@ -88,7 +88,7 @@ export default function ContactPage() {
                 <Mail className="w-6 h-6 text-teal-400 flex-shrink-0 mt-1" />
                 <div>
                   <h3 className="font-semibold text-lg">Email</h3>
-                  <p className="text-slate-300">support@qwikaam.com</p>
+                  <p className="text-slate-300">support@qwikkaam.com</p>
                   <p className="text-slate-400 text-sm">Online support 24/7</p>
                 </div>
               </div>
@@ -98,7 +98,7 @@ export default function ContactPage() {
                 <div>
                   <h3 className="font-semibold text-lg">Office Address</h3>
                   <p className="text-slate-300">
-                    Qwikaam HQ, 4th Floor, Tech Park,<br />
+                    Qwikkaam HQ, 4th Floor, Tech Park,<br />
                     Andheri East, Mumbai, 400069<br />
                     Maharashtra, India
                   </p>

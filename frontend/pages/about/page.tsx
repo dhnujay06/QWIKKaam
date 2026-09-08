@@ -20,7 +20,7 @@ export default function AboutPage() {
       <section className="bg-slate-900 text-white py-20 px-4 text-center">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl md:text-5xl font-bold mb-6 text-teal-400">
-            {t("About Qwikaam", "क्विकाम के बारे में")}
+            {t("About Qwikkaam", "क्विक्काम के बारे में")}
           </h1>
           <p className="text-xl text-slate-300">
             {t("Empowering domestic workers, simplifying home care.", "घरेलू कामगारों को सशक्त बनाना, घर की देखभाल को आसान बनाना।")}
@@ -41,10 +41,10 @@ export default function AboutPage() {
           <div>
             <h2 className="text-3xl font-bold text-slate-900 mb-6">Our Story</h2>
             <p className="text-slate-600 mb-4 leading-relaxed">
-              Qwikaam was founded with a simple vision: to bridge the gap between households seeking reliable help and skilled domestic workers looking for dignified employment.
+              Qwikkaam was founded with a simple vision: to bridge the gap between households seeking reliable help and skilled domestic workers looking for dignified employment.
             </p>
             <p className="text-slate-600 leading-relaxed">
-              In India, the unorganized domestic help sector leaves both customers and workers frustrated. Customers struggle with reliability, while workers face exploitation and lack of fair wages. We created Qwikaam to bring structure, trust, and empowerment to this vital industry.
+              In India, the unorganized domestic help sector leaves both customers and workers frustrated. Customers struggle with reliability, while workers face exploitation and lack of fair wages. We created Qwikkaam to bring structure, trust, and empowerment to this vital industry.
             </p>
           </div>
         </div>
