@@ -4,6 +4,10 @@ import { useLanguage } from '@/context/LanguageContext';
 import { formatPrice } from '@/lib/utils';
 import { Service } from '@/types';
 import { format } from 'date-fns';
+import { 
+  ChefHat, Sparkles, Baby, HeartHandshake, 
+  Car, Wrench, Shirt 
+} from 'lucide-react';
 
 interface BookingSummaryProps {
   service: Service;
@@ -13,21 +17,44 @@ interface BookingSummaryProps {
   onApplyCoupon?: (code: string) => void;
 }
 
+function renderServiceIcon(iconName: string) {
+  const iconProps = { className: "w-6 h-6 text-teal-600" };
+  switch (iconName) {
+    case 'ChefHat':
+      return <ChefHat {...iconProps} />;
+    case 'Broom':
+      return <Sparkles {...iconProps} />;
+    case 'Sparkles':
+      return <Sparkles {...iconProps} />;
+    case 'Baby':
+      return <Baby {...iconProps} />;
+    case 'HeartHandshake':
+      return <HeartHandshake {...iconProps} />;
+    case 'Car':
+      return <Car {...iconProps} />;
+    case 'Wrench':
+      return <Wrench {...iconProps} />;
+    case 'Shirt':
+      return <Shirt {...iconProps} />;
+    default:
+      return <Sparkles {...iconProps} />;
+  }
+}
+
 export default function BookingSummary({ service, date, time, address, onApplyCoupon }: BookingSummaryProps) {
   const { t } = useLanguage();
   
   const basePrice = service.basePrice;
-  const serviceFee = 49;
-  const gst = Math.round((basePrice + serviceFee) * 0.18);
-  const total = basePrice + serviceFee + gst;
+  const platformFee = Math.round(basePrice * 0.05); // 5% Platform Fee
+  const total = basePrice + platformFee; // No GST
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5 space-y-5">
       <h3 className="font-bold text-lg text-slate-900 border-b pb-3">{t('Order Summary', 'आदेश सारांश')}</h3>
       
       <div className="flex gap-4 items-center">
-        <div className="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center text-2xl">
-          {service.icon}
+        <div className="w-12 h-12 rounded-full bg-teal-50 flex items-center justify-center shrink-0">
+          {renderServiceIcon(service.icon)}
         </div>
         <div>
           <h4 className="font-semibold text-slate-900">
@@ -48,16 +75,12 @@ export default function BookingSummary({ service, date, time, address, onApplyCo
 
       <div className="space-y-2 text-sm text-slate-600 pt-3 border-t">
         <div className="flex justify-between">
-          <span>{t('Base Price', 'मूल कीमत')}</span>
+          <span>{t('Service Price', 'सेवा शुल्क')}</span>
           <span>{formatPrice(basePrice)}</span>
         </div>
         <div className="flex justify-between">
-          <span>{t('Trust & Safety Fee', 'सुरक्षा शुल्क')}</span>
-          <span>{formatPrice(serviceFee)}</span>
-        </div>
-        <div className="flex justify-between">
-          <span>{t('Taxes (GST)', 'कर (GST)')}</span>
-          <span>{formatPrice(gst)}</span>
+          <span>{t('Platform Fee (5%)', 'प्लेटफ़ॉर्म शुल्क (5%)')}</span>
+          <span>{formatPrice(platformFee)}</span>
         </div>
       </div>
 

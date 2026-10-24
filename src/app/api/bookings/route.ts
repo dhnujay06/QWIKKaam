@@ -88,13 +88,19 @@ export async function POST(req: NextRequest) {
       addressId = newAddress.id;
     }
 
-    const serviceFee = 49;
-    const gstAmount = Math.round((Number(baseAmount) + serviceFee) * 0.18);
-    const totalAmount = Number(baseAmount) + serviceFee + gstAmount;
+    const base = Number(baseAmount);
+    const serviceFee = Math.round(base * 0.05); // 5% Platform Fee
+    const gstAmount = 0; // GST disabled
+    const totalAmount = base + serviceFee;
+
+    // Commission: 10% cut from service charge, 90% goes to helper
+    const platformCommission = Math.round(base * 0.10);
+    const helperPayout = base - platformCommission;
 
     // Build consolidated instructions / notes
     const notesParts: string[] = [];
     if (specialInstructions) notesParts.push(`Instructions: ${specialInstructions}`);
+    notesParts.push(`Commission: ₹${platformCommission} (10%) | Platform Fee: ₹${serviceFee} (5%) | Helper Payout: ₹${helperPayout}`);
     if (shortlistedHelpers && shortlistedHelpers.length > 0) {
       notesParts.push(`Shortlisted Helpers: ${shortlistedHelpers.join(', ')}`);
     }

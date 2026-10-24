@@ -66,7 +66,7 @@ function InstantBookingContent() {
       setBookingLoading(true);
       setBookingError('');
       try {
-        const baseAmount = selectedService.basePrice * 2; // 2-hour default
+        const baseAmount = selectedService.basePrice;
         const res = await fetch('/api/bookings', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
