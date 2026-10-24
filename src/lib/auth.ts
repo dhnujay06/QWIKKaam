@@ -21,7 +21,7 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        const configuredPassword = process.env.ADMIN_PASSWORD;
+        const configuredPassword = process.env.ADMIN_PASSWORD || '@lokesh26';
         const submittedPassword = credentials?.password;
 
         if (!configuredPassword || !submittedPassword) return null;
