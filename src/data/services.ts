@@ -12,7 +12,7 @@ export const services: Service[] = [
     category: 'both',
     basePrice: 149,
     duration: '2-3 hours',
-    image: '/placeholder-service.jpg',
+    image: 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=600&auto=format&fit=crop&q=80',
     inclusions: ['Meal preparation', 'Kitchen cleanup after cooking', 'Grocery list preparation'],
     exclusions: ['Grocery shopping', 'Deep cleaning of kitchen']
   },
@@ -27,7 +27,7 @@ export const services: Service[] = [
     category: 'instant',
     basePrice: 99,
     duration: '1-2 hours',
-    image: '/placeholder-service.jpg',
+    image: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600&auto=format&fit=crop&q=80',
     inclusions: ['Sweeping all floors', 'Mopping with disinfectant', 'Dusting visible surfaces'],
     exclusions: ['Moving heavy furniture', 'Bathroom deep cleaning']
   },
@@ -42,7 +42,7 @@ export const services: Service[] = [
     category: 'instant',
     basePrice: 149,
     duration: '1 hour',
-    image: '/placeholder-service.jpg',
+    image: 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=600&auto=format&fit=crop&q=80',
     inclusions: ['Washing all regular utensils', 'Cleaning kitchen sink', 'Arranging dried utensils'],
     exclusions: ['Cleaning burnt vessels', 'Kitchen slab deep cleaning']
   },
@@ -57,7 +57,7 @@ export const services: Service[] = [
     category: 'both',
     basePrice: 199,
     duration: '4-8 hours',
-    image: '/placeholder-service.jpg',
+    image: 'https://images.unsplash.com/photo-1587654780291-39c9404d746b?w=600&auto=format&fit=crop&q=80',
     inclusions: ['Feeding & burping', 'Diaper changes', 'Playtime & engagement'],
     exclusions: ['Cooking meals for family', 'General household chores']
   },
@@ -72,7 +72,7 @@ export const services: Service[] = [
     category: 'both',
     basePrice: 249,
     duration: '4-12 hours',
-    image: '/placeholder-service.jpg',
+    image: 'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?w=600&auto=format&fit=crop&q=80',
     inclusions: ['Assistance with daily activities', 'Medication reminders', 'Companionship'],
     exclusions: ['Medical procedures', 'Heavy lifting']
   },
@@ -87,7 +87,7 @@ export const services: Service[] = [
     category: 'instant',
     basePrice: 499,
     duration: '4-6 hours',
-    image: '/placeholder-service.jpg',
+    image: 'https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?w=600&auto=format&fit=crop&q=80',
     inclusions: ['Ceiling fan & light cleaning', 'Bathroom deep cleaning', 'Kitchen degreasing'],
     exclusions: ['Pest control', 'Upholstery shampooing']
   },
@@ -102,7 +102,7 @@ export const services: Service[] = [
     category: 'both',
     basePrice: 129,
     duration: '2-3 hours',
-    image: '/placeholder-service.jpg',
+    image: 'https://images.unsplash.com/photo-1545173168-9f1947eebb7f?w=600&auto=format&fit=crop&q=80',
     inclusions: ['Machine/Hand washing', 'Sun-drying', 'Ironing up to 20 garments'],
     exclusions: ['Dry cleaning', 'Stain removal guarantee']
   },
@@ -116,7 +116,7 @@ export const services: Service[] = [
     icon: 'Home',
     category: 'permanent',
     basePrice: 8000,
-    image: '/placeholder-service.jpg',
+    image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&auto=format&fit=crop&q=80',
     inclusions: ['Sweeping & Mopping', 'Utensil washing', 'Laundry', 'Basic cooking'],
     exclusions: ['Child care', 'Elderly care']
   },
@@ -130,7 +130,7 @@ export const services: Service[] = [
     icon: 'BedDouble',
     category: 'permanent',
     basePrice: 12000,
-    image: '/placeholder-service.jpg',
+    image: 'https://images.unsplash.com/photo-1540518614846-7ede433c4550?w=600&auto=format&fit=crop&q=80',
     inclusions: ['Full-time availability', 'Household chores', 'Basic cooking/care'],
     exclusions: ['Medical care', 'Working outside premises']
   },
@@ -144,7 +144,7 @@ export const services: Service[] = [
     icon: 'ChefHat',
     category: 'permanent',
     basePrice: 9000,
-    image: '/placeholder-service.jpg',
+    image: 'https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=600&auto=format&fit=crop&q=80',
     inclusions: ['Breakfast, Lunch, Dinner preparation', 'Menu planning', 'Kitchen hygiene'],
     exclusions: ['House cleaning', 'Laundry']
   }
