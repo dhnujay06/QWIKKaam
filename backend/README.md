@@ -37,3 +37,11 @@ Yeh folder Qwikkaam platform ke **Server-Side (APIs, Business Logic & Database)*
 - **`lib/prisma.ts`**: Supabase PostgreSQL singleton client
 - **`lib/auth.ts`**: Server-side authentication configuration
 - **`types/`**: TypeScript interfaces and NextAuth session extensions
+
+## Admin authentication setup
+
+Set `ADMIN_PASSWORD` in the local `.env` file and in the production hosting
+environment before using the admin panel. Use a long, unique password (for
+example, generate one with `openssl rand -base64 32`) and never commit it.
+Admin routes and API handlers validate the NextAuth session and require the
+`ADMIN` role; the password is checked only on the server.

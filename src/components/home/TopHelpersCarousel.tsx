@@ -17,6 +17,27 @@ const MOCK_HELPERS = [
 export default function TopHelpersCarousel() {
   const { t } = useLanguage();
   const carouselRef = useRef<HTMLDivElement>(null);
+  const [carouselHelpers, setCarouselHelpers] = React.useState<any[]>(MOCK_HELPERS);
+
+  React.useEffect(() => {
+    fetch('/api/helpers')
+      .then(res => res.json())
+      .then(data => {
+        if (data?.helpers?.length) {
+          const mapped = data.helpers.slice(0, 8).map((h: any) => ({
+            id: h.id,
+            name: h.name,
+            rating: h.rating,
+            jobs: h.reviewCount || h.totalBookings || 15,
+            exp: `${h.experience} yrs`,
+            rate: h.hourlyRate,
+            skills: h.skills?.slice(0, 3) || ['Cleaning'],
+          }));
+          setCarouselHelpers(mapped);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const scroll = (direction: 'left' | 'right') => {
     if (carouselRef.current) {
@@ -59,7 +80,7 @@ export default function TopHelpersCarousel() {
           className="flex overflow-x-auto gap-6 pb-8 -mx-4 px-4 md:mx-0 md:px-0 snap-x hide-scrollbar"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
-          {MOCK_HELPERS.map((helper) => (
+          {carouselHelpers.map((helper) => (
             <div 
               key={helper.id} 
               className="min-w-[300px] md:min-w-[350px] bg-slate-800 rounded-2xl p-6 border border-slate-700 snap-start hover:border-teal-500/50 transition-colors flex flex-col"

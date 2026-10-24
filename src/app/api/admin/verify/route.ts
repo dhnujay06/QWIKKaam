@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
+import { isAdminAuthorized } from "@/lib/admin-auth";
 import { prisma } from "@/lib/prisma";
 
 // PATCH — update verification status of a helper
 export async function PATCH(req: NextRequest) {
+  if (!(await isAdminAuthorized())) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const body = await req.json();
     const { userId, level, value, extra } = body;
@@ -52,6 +57,10 @@ export async function PATCH(req: NextRequest) {
 
 // GET — get verification details of a helper
 export async function GET(req: NextRequest) {
+  if (!(await isAdminAuthorized())) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const { searchParams } = new URL(req.url);
   const userId = searchParams.get("userId");
   if (!userId) return NextResponse.json({ error: "userId required" }, { status: 400 });

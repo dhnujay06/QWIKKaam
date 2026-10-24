@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
-import { helpers } from '@/data/helpers';
+import { helpers as initialHelpers } from '@/data/helpers';
 import { services } from '@/data/services';
 import { HelperCard } from '@/components/ui/HelperCard';
 import { Filter, X, Search, SlidersHorizontal } from 'lucide-react';
@@ -10,21 +10,33 @@ import { Helper } from '@/types';
 
 export default function HelpersPage() {
   const { t } = useLanguage();
+  const [helpersList, setHelpersList] = useState<Helper[]>(initialHelpers);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   
+  useEffect(() => {
+    fetch('/api/helpers')
+      .then(res => res.json())
+      .then(data => {
+        if (data?.helpers && Array.isArray(data.helpers) && data.helpers.length > 0) {
+          setHelpersList(data.helpers);
+        }
+      })
+      .catch(err => console.error('Failed to fetch dynamic helpers:', err));
+  }, []);
+
   // Filters state
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [selectedGender, setSelectedGender] = useState<string>('All');
   const [minRating, setMinRating] = useState<number>(0);
   const [sortBy, setSortBy] = useState<string>('relevance');
 
-  const allCities = Array.from(new Set(helpers.map(h => h.city)));
+  const allCities = Array.from(new Set(helpersList.map(h => h.city)));
   const [selectedCity, setSelectedCity] = useState<string>('All');
 
   // Filter logic
   const filteredHelpers = useMemo(() => {
-    let result = helpers;
+    let result = [...helpersList];
 
     if (searchQuery) {
       result = result.filter(h => h.name.toLowerCase().includes(searchQuery.toLowerCase()));

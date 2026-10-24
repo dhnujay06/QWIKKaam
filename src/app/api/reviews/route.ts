@@ -69,8 +69,8 @@ export async function POST(req: NextRequest) {
       data: {
         helperId,
         customerId,
-        bookingId: bookingId || undefined,
-        rating,
+        bookingId: bookingId || null,
+        rating: Number(rating),
         comment: comment || null,
       },
     });

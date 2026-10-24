@@ -1,3 +1,4 @@
+import { timingSafeEqual } from 'node:crypto';
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { prisma } from '@/lib/prisma';
@@ -13,6 +14,31 @@ export const authOptions: NextAuthOptions = {
     error: '/login',
   },
   providers: [
+    CredentialsProvider({
+      id: 'admin',
+      name: 'Admin password',
+      credentials: {
+        password: { label: 'Password', type: 'password' },
+      },
+      async authorize(credentials) {
+        const configuredPassword = process.env.ADMIN_PASSWORD;
+        const submittedPassword = credentials?.password;
+
+        if (!configuredPassword || !submittedPassword) return null;
+
+        const configured = Buffer.from(configuredPassword);
+        const submitted = Buffer.from(submittedPassword);
+        if (configured.length !== submitted.length) return null;
+        if (!timingSafeEqual(configured, submitted)) return null;
+
+        return {
+          id: 'qwikkaam-admin',
+          name: 'Qwikkaam Admin',
+          phone: 'admin',
+          role: 'ADMIN',
+        };
+      },
+    }),
     CredentialsProvider({
       name: 'OTP',
       credentials: {
@@ -71,13 +97,14 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.phone = (user as any).phone;
-        token.role = (user as any).role;
+        token.phone = user.phone;
+        token.role = user.role;
       }
       return token;
     },
     async session({ session, token }) {
       if (token) {
+        session.user = session.user || ({} as any);
         session.user.id = token.id as string;
         session.user.phone = token.phone as string;
         session.user.role = token.role as string;

@@ -11,6 +11,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Name, phone, and role are required' }, { status: 400 });
     }
 
+    const normalizedRole = role.toUpperCase();
+    if (normalizedRole !== 'CUSTOMER' && normalizedRole !== 'HELPER') {
+      return NextResponse.json({ error: 'Invalid role. Only CUSTOMER and HELPER registration is allowed.' }, { status: 400 });
+    }
+
     // Check if user already exists
     const existing = await prisma.user.findUnique({ where: { phone } });
     if (existing) {
@@ -22,7 +27,7 @@ export async function POST(req: NextRequest) {
       data: {
         name,
         phone,
-        role: role.toUpperCase(),
+        role: normalizedRole as any,
         city: 'Bhilai',
         area: 'Risali Sector',
         pincode: '490006',

@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
+import { isAdminAuthorized } from "@/lib/admin-auth";
 import { prisma } from "@/lib/prisma";
 
 // GET — all helpers with their profiles
 export async function GET() {
+  if (!(await isAdminAuthorized())) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const helpers = await prisma.user.findMany({
       where: { role: "HELPER" },
@@ -30,6 +35,10 @@ export async function GET() {
 
 // PATCH — toggle helper availability
 export async function PATCH(req: NextRequest) {
+  if (!(await isAdminAuthorized())) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const { userId, isAvailable } = await req.json();
     if (!userId) return NextResponse.json({ error: "userId required" }, { status: 400 });

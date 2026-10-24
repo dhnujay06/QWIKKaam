@@ -26,12 +26,22 @@ export default function PermanentBookingPage() {
   const [isConfirmed, setIsConfirmed] = useState(false);
   
   // State
+  const [availableHelpers, setAvailableHelpers] = useState<any[]>(helpers);
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
   const [requirements, setRequirements] = useState<RequirementsData>({
     bhk: '', familySize: 0, diet: '', timing: '', languages: [], notes: ''
   });
   const [shortlistedHelpers, setShortlistedHelpers] = useState<string[]>([]);
   const [scheduleData, setScheduleData] = useState({ date: '', time: '', phone: '' });
+
+  useEffect(() => {
+    fetch('/api/helpers')
+      .then(res => res.json())
+      .then(data => {
+        if (data?.helpers?.length) setAvailableHelpers(data.helpers);
+      })
+      .catch(() => {});
+  }, []);
 
   const canGoNext = () => {
     if (currentStep === 0) return !!selectedServiceId;
@@ -65,11 +75,14 @@ export default function PermanentBookingPage() {
             scheduledDate: scheduleData.date ? new Date(scheduleData.date).toISOString() : new Date().toISOString(),
             timeSlot:     scheduleData.time,
             baseAmount:   selectedService?.basePrice || 8000,
+            phone:        scheduleData.phone,
+            shortlistedHelpers,
+            requirements,
             specialInstructions: requirements.notes,
           }),
         });
         const data = await res.json();
-        if (!res.ok && res.status !== 401) {
+        if (!res.ok) {
           setBookingError(data.error || 'Booking failed. Please try again.');
         } else {
           setIsConfirmed(true);
@@ -182,7 +195,7 @@ export default function PermanentBookingPage() {
               {currentStep === 2 && (
                 <div>
                   <HelperShortlist 
-                    helpers={helpers} // Using imported helpers
+                    helpers={availableHelpers}
                     selectedIds={shortlistedHelpers}
                     onSelect={setShortlistedHelpers}
                   />

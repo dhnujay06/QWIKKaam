@@ -58,11 +58,47 @@ interface HelperWithDistance {
 
 export default function NearbyHelpers({ serviceFilter }: { serviceFilter?: string }) {
   const { t, language } = useLanguage();
+  const [baseHelpers, setBaseHelpers] = useState<any[]>(MOCK_HELPERS);
   const [userLocation, setUserLocation] = useState<{ lat: number; lon: number } | null>(null);
   const [locationError, setLocationError] = useState("");
   const [loading, setLoading] = useState(false);
   const [helpers, setHelpers] = useState<HelperWithDistance[]>([]);
   const [selectedHelper, setSelectedHelper] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch('/api/helpers')
+      .then(res => res.json())
+      .then(data => {
+        if (data?.helpers?.length) {
+          const mapped = data.helpers.map((h: any, idx: number) => {
+            const angle = (idx * 45) * (Math.PI / 180);
+            const r = 0.0025 + (idx % 4) * 0.0018;
+            return {
+              id: h.id,
+              name: h.name,
+              nameHi: h.nameHi || h.name,
+              lat: 21.2043 + r * Math.cos(angle),
+              lon: 81.3372 + r * Math.sin(angle),
+              rating: h.rating || 4.8,
+              skills: h.skills || ['House Help'],
+              hourlyRate: h.hourlyRate || 149,
+              available: h.availability === 'available',
+              experience: h.experience || 3,
+            };
+          });
+          setBaseHelpers(mapped);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const calculateWithLoc = (loc: { lat: number; lon: number }, sourceHelpers = baseHelpers) => {
+    return sourceHelpers.map((h) => ({
+      ...h,
+      distance: parseFloat(getDistance(loc.lat, loc.lon, h.lat, h.lon).toFixed(1)),
+      eta: getETA(getDistance(loc.lat, loc.lon, h.lat, h.lon)),
+    })).sort((a, b) => a.distance - b.distance);
+  };
 
   const getLocation = () => {
     setLoading(true);
@@ -76,25 +112,14 @@ export default function NearbyHelpers({ serviceFilter }: { serviceFilter?: strin
       (pos) => {
         const loc = { lat: pos.coords.latitude, lon: pos.coords.longitude };
         setUserLocation(loc);
-        // Calculate distance for each helper
-        const withDistance = MOCK_HELPERS.map((h) => ({
-          ...h,
-          distance: parseFloat(getDistance(loc.lat, loc.lon, h.lat, h.lon).toFixed(1)),
-          eta: getETA(getDistance(loc.lat, loc.lon, h.lat, h.lon)),
-        })).sort((a, b) => a.distance - b.distance);
-        setHelpers(withDistance);
+        setHelpers(calculateWithLoc(loc));
         setLoading(false);
       },
       (err) => {
         // If GPS denied, use Risali Sector center as default
         const defaultLoc = { lat: 21.2043, lon: 81.3372 };
         setUserLocation(defaultLoc);
-        const withDistance = MOCK_HELPERS.map((h) => ({
-          ...h,
-          distance: parseFloat(getDistance(defaultLoc.lat, defaultLoc.lon, h.lat, h.lon).toFixed(1)),
-          eta: getETA(getDistance(defaultLoc.lat, defaultLoc.lon, h.lat, h.lon)),
-        })).sort((a, b) => a.distance - b.distance);
-        setHelpers(withDistance);
+        setHelpers(calculateWithLoc(defaultLoc));
         setLocationError(t("Using Risali Sector as default location", "डिफ़ॉल्ट रूप से रिसाली सेक्टर का उपयोग कर रहे हैं"));
         setLoading(false);
       }

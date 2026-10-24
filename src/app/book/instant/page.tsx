@@ -48,7 +48,7 @@ function InstantBookingContent() {
   const canGoNext = () => {
     if (currentStep === 0) return !!selectedServiceId;
     if (currentStep === 1) return !!selectedDate && !!selectedTime;
-    if (currentStep === 2) return !!addressData.houseNo && !!addressData.area && !!addressData.city && !!addressData.pincode;
+    if (currentStep === 2) return !!addressData.houseNo && !!addressData.area && !!addressData.city && !!addressData.pincode && (!addressData.phone || addressData.phone.length >= 10);
     return true;
   };
 
@@ -78,17 +78,22 @@ function InstantBookingContent() {
             timeSlot:    selectedTime,
             durationHours: 2,
             baseAmount,
+            phone: addressData.phone,
+            customerName: addressData.customerName,
+            address: {
+              houseNo: addressData.houseNo,
+              area: addressData.area,
+              city: addressData.city,
+              pincode: addressData.pincode,
+              landmark: addressData.landmark,
+              tag: addressData.tag,
+            },
             specialInstructions: addressData.instructions,
           }),
         });
         const data = await res.json();
         if (!res.ok) {
-          // If unauthenticated, still show confirmation (guest flow)
-          if (res.status === 401) {
-            setIsConfirmed(true);
-          } else {
-            setBookingError(data.error || 'Booking failed. Please try again.');
-          }
+          setBookingError(data.error || 'Booking failed. Please try again.');
         } else {
           setBookingId(data.booking?.id || null);
           setIsConfirmed(true);
@@ -116,6 +121,7 @@ function InstantBookingContent() {
           date={selectedDate}
           time={selectedTime}
           address={`${addressData.houseNo}, ${addressData.area}, ${addressData.city}`}
+          bookingId={bookingId || undefined}
         />
       </div>
     );

@@ -13,6 +13,8 @@ export interface AddressData {
   pincode: string;
   instructions: string;
   tag: 'Home' | 'Work' | 'Other';
+  customerName?: string;
+  phone?: string;
 }
 
 interface AddressFormProps {
@@ -30,6 +32,35 @@ export default function AddressForm({ data, onChange, errors = {} }: AddressForm
 
   return (
     <div className="space-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">{t('Your Name', 'आपका नाम')} *</label>
+          <input 
+            type="text" 
+            value={data.customerName || ''}
+            onChange={(e) => updateField('customerName', e.target.value)}
+            className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500/50 bg-white"
+            placeholder="e.g. Rahul Sharma"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">{t('Mobile Number', 'मोबाइल नंबर')} *</label>
+          <div className="flex">
+            <span className="inline-flex items-center px-3 rounded-l-lg border border-r-0 border-slate-200 bg-slate-50 text-slate-500 text-sm">
+              +91
+            </span>
+            <input 
+              type="tel" 
+              maxLength={10}
+              value={data.phone || ''}
+              onChange={(e) => updateField('phone', e.target.value)}
+              className="flex-1 w-full px-3 py-2 border border-slate-200 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-teal-500/50 bg-white"
+              placeholder="9876543210"
+            />
+          </div>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-1">{t('Flat / House No.', 'फ्लैट / मकान नंबर')} *</label>

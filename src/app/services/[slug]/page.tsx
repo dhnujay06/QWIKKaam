@@ -23,7 +23,20 @@ export default function ServiceDetailPage({ params }: { params: Promise<{ slug: 
   const title = language === 'hi' && service.titleHi ? service.titleHi : service.title;
   const description = language === 'hi' && service.descriptionHi ? service.descriptionHi : service.description;
   
-  const relevantHelpers = helpers.filter(h => h.skills.includes(service.title));
+  const [relevantHelpers, setRelevantHelpers] = React.useState<any[]>(() =>
+    helpers.filter(h => h.skills.includes(service.title) || h.serviceIds?.includes(service.id))
+  );
+
+  React.useEffect(() => {
+    fetch(`/api/helpers?service=${service.id}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data?.helpers?.length) {
+          setRelevantHelpers(data.helpers);
+        }
+      })
+      .catch(() => {});
+  }, [service.id]);
 
   return (
     <div className="bg-slate-50 min-h-screen pb-20">

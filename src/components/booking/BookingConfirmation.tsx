@@ -14,16 +14,20 @@ interface BookingConfirmationProps {
   time: string;
   address: string;
   helper?: Helper;
+  bookingId?: string;
 }
 
-export default function BookingConfirmation({ service, date, time, address, helper }: BookingConfirmationProps) {
+export default function BookingConfirmation({ service, date, time, address, helper, bookingId: propBookingId }: BookingConfirmationProps) {
   const { t } = useLanguage();
-  const [bookingId, setBookingId] = useState('');
+  const [bookingId, setBookingId] = useState(propBookingId || '');
 
   useEffect(() => {
-    // Generate mock booking ID
-    setBookingId(`QW${Math.floor(100000 + Math.random() * 900000)}`);
-  }, []);
+    if (propBookingId) {
+      setBookingId(propBookingId);
+    } else if (!bookingId) {
+      setBookingId(`QW${Math.floor(100000 + Math.random() * 900000)}`);
+    }
+  }, [propBookingId]);
 
   return (
     <div className="max-w-2xl mx-auto py-8 px-4 flex flex-col items-center">

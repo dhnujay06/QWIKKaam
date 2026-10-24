@@ -18,8 +18,29 @@ export default function HelperProfilePage({ params }: { params: Promise<{ id: st
   const { id } = use(params);
   const { t, language } = useLanguage();
   
-  const helper = helpers.find(h => h.id === id);
-  
+  const [helper, setHelper] = React.useState<any>(() => helpers.find(h => h.id === id) || null);
+  const [loading, setLoading] = React.useState(!helper);
+
+  React.useEffect(() => {
+    if (!helper) {
+      fetch(`/api/helpers?id=${id}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data?.helper) setHelper(data.helper);
+          setLoading(false);
+        })
+        .catch(() => setLoading(false));
+    }
+  }, [id, helper]);
+
+  if (loading) {
+    return (
+      <div className="bg-slate-50 min-h-screen flex items-center justify-center">
+        <div className="text-slate-500 font-medium">Loading helper profile...</div>
+      </div>
+    );
+  }
+
   if (!helper) {
     notFound();
   }

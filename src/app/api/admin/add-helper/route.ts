@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
+import { isAdminAuthorized } from "@/lib/admin-auth";
 import { prisma } from "@/lib/prisma";
 
 // POST — Admin registers a helper on their behalf (no OTP needed)
 export async function POST(req: NextRequest) {
+  if (!(await isAdminAuthorized())) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const body = await req.json();
     const {
