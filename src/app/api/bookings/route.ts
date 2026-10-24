@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { sendBookingNotifications } from '@/lib/notifications';
+
+export const dynamic = 'force-dynamic';
 
 // GET /api/bookings — get all bookings for the logged-in user
 export async function GET(req: NextRequest) {
@@ -41,14 +44,15 @@ export async function POST(req: NextRequest) {
     }
 
     let customerId = session?.user?.id;
+    const finalPhone = phone || (session?.user as any)?.phone;
 
     // If user is not logged in, require a phone number for guest booking
     if (!customerId) {
-      if (!phone || phone.replace(/\D/g, '').length < 10) {
+      if (!finalPhone || finalPhone.replace(/\D/g, '').length < 10) {
         return NextResponse.json({ error: 'Phone number is required for booking' }, { status: 400 });
       }
 
-      const cleanPhone = phone.replace(/\D/g, '').slice(-10);
+      const cleanPhone = finalPhone.replace(/\D/g, '').slice(-10);
 
       // Find or create customer account for this phone
       let user = await prisma.user.findUnique({
@@ -127,7 +131,32 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json({ success: true, booking }, { status: 201 });
+    // Send Real-Time WhatsApp & SMS Notifications
+    let notificationInfo = null;
+    try {
+      const addressString = address 
+        ? `${address.houseNo || address.flatNo || ''}, ${address.street || address.area || ''}, ${address.city || 'Bhilai'}`
+        : 'Risali Sector, Bhilai';
+
+      notificationInfo = await sendBookingNotifications({
+        bookingId: booking.id,
+        customerName: customerName || 'Valued Customer',
+        customerPhone: finalPhone || '9876543210',
+        serviceName,
+        scheduledDate: new Date(scheduledDate).toLocaleDateString('en-IN', { dateStyle: 'medium' }),
+        timeSlot: timeSlot || undefined,
+        totalAmount,
+        addressText: addressString,
+      });
+    } catch (notifError) {
+      console.error('Notification dispatch error (non-fatal):', notifError);
+    }
+
+    return NextResponse.json({ 
+      success: true, 
+      booking,
+      notification: notificationInfo 
+    }, { status: 201 });
 
   } catch (error) {
     console.error('Booking creation error:', error);
