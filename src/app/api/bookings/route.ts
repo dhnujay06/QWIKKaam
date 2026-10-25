@@ -2,38 +2,31 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { sendBookingNotifications } from '@/lib/notifications';
-import { addFallbackBooking, StoredBooking } from '@/lib/booking-store';
+import { notifyBookingCreated, notifyBookingStatusUpdate } from '@/lib/notifications';
+import { format } from 'date-fns';
 
-export const dynamic = 'force-dynamic';
-
-// GET /api/bookings — get all bookings for the user
+// GET /api/bookings — get all bookings for the logged-in user
 export async function GET(req: NextRequest) {
-  try {
-    const session = await getServerSession(authOptions);
-    if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const session = await getServerSession(authOptions);
+  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const bookings = await prisma.booking.findMany({
-      where: { customerId: session.user.id },
-      include: {
-        address: true,
-        helper: {
-          include: {
-            user: { select: { name: true, phone: true } },
-          },
+  const bookings = await prisma.booking.findMany({
+    where: { customerId: session.user.id },
+    include: {
+      address: true,
+      helper: {
+        include: {
+          user: { select: { name: true, phone: true } },
         },
       },
-      orderBy: { createdAt: 'desc' },
-    });
+    },
+    orderBy: { createdAt: 'desc' },
+  });
 
-    return NextResponse.json({ bookings });
-  } catch (error) {
-    console.warn('GET /api/bookings DB error, returning empty list');
-    return NextResponse.json({ bookings: [] });
-  }
+  return NextResponse.json({ bookings });
 }
 
-// POST /api/bookings — create a new booking
+// POST /api/bookings — create a new booking (Supports both Logged-in & Guest Flow)
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -49,17 +42,64 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing required booking fields' }, { status: 400 });
     }
 
-    const finalPhone = (phone || (session?.user as any)?.phone || '9876543210').replace(/\D/g, '').slice(-10);
-    const finalCustomerName = customerName || (session?.user as any)?.name || 'Valued Customer';
+    let customerId = session?.user?.id;
+
+    // If user is not logged in, require a phone number for guest booking
+    if (!customerId) {
+      if (!phone || phone.replace(/\D/g, '').length < 10) {
+        return NextResponse.json({ error: 'Phone number is required for booking' }, { status: 400 });
+      }
+
+      const cleanPhone = phone.replace(/\D/g, '').slice(-10);
+
+      // Find or create customer account for this phone
+      let user = await prisma.user.findUnique({
+        where: { phone: cleanPhone },
+      });
+
+      if (!user) {
+        user = await prisma.user.create({
+          data: {
+            phone: cleanPhone,
+            name: customerName || 'Guest Customer',
+            role: 'CUSTOMER',
+            city: address?.city || 'Bhilai',
+            area: address?.area || 'Risali Sector',
+            pincode: address?.pincode || '490006',
+          },
+        });
+      }
+      customerId = user.id;
+    }
+
+    // Save Address if address details are passed
+    let addressId: string | undefined = undefined;
+    if (address && (address.houseNo || address.flatNo)) {
+      const newAddress = await prisma.address.create({
+        data: {
+          userId: customerId,
+          flatNo: address.houseNo || address.flatNo || 'N/A',
+          street: address.street || address.area || 'Risali Sector',
+          landmark: address.landmark || null,
+          area: address.area || 'Risali Sector',
+          city: address.city || 'Bhilai',
+          pincode: address.pincode || '490006',
+          tag: address.tag || 'Home',
+        },
+      });
+      addressId = newAddress.id;
+    }
 
     const base = Number(baseAmount);
     const serviceFee = Math.round(base * 0.05); // 5% Platform Fee
     const gstAmount = 0; // GST disabled
     const totalAmount = base + serviceFee;
 
+    // Commission: 10% cut from service charge, 90% goes to helper
     const platformCommission = Math.round(base * 0.10);
     const helperPayout = base - platformCommission;
 
+    // Build consolidated instructions / notes
     const notesParts: string[] = [];
     if (specialInstructions) notesParts.push(`Instructions: ${specialInstructions}`);
     notesParts.push(`Commission: ₹${platformCommission} (10%) | Platform Fee: ₹${serviceFee} (5%) | Helper Payout: ₹${helperPayout}`);
@@ -69,133 +109,101 @@ export async function POST(req: NextRequest) {
     if (requirements) {
       notesParts.push(`Requirements: ${JSON.stringify(requirements)}`);
     }
-    const fullInstructions = notesParts.length > 0 ? notesParts.join(' | ') : undefined;
+    const fullInstructions = notesParts.length > 0 ? notesParts.join(' | ') : null;
 
-    let savedBooking: any = null;
-
-    // 1. Attempt Prisma PostgreSQL Save
-    try {
-      let customerId = session?.user?.id;
-      if (!customerId) {
-        let user = await prisma.user.findUnique({ where: { phone: finalPhone } });
-        if (!user) {
-          user = await prisma.user.create({
-            data: {
-              phone: finalPhone,
-              name: finalCustomerName,
-              role: 'CUSTOMER',
-              city: address?.city || 'Bhilai',
-              area: address?.area || 'Risali Sector',
-              pincode: address?.pincode || '490006',
-            },
-          });
-        }
-        customerId = user.id;
-      }
-
-      let addressId: string | undefined = undefined;
-      if (address && (address.houseNo || address.flatNo || address.area)) {
-        const newAddress = await prisma.address.create({
-          data: {
-            userId: customerId,
-            flatNo: address.houseNo || address.flatNo || '101',
-            street: address.street || address.area || 'Risali Sector',
-            landmark: address.landmark || null,
-            area: address.area || 'Risali Sector',
-            city: address.city || 'Bhilai',
-            pincode: address.pincode || '490006',
-            tag: address.tag || 'Home',
-          },
-        });
-        addressId = newAddress.id;
-      }
-
-      savedBooking = await prisma.booking.create({
-        data: {
-          customerId,
-          serviceId,
-          serviceName,
-          type: type === 'MONTHLY' ? 'MONTHLY' : type === 'INSTANT' ? 'INSTANT' : type,
-          scheduledDate: new Date(scheduledDate),
-          timeSlot: timeSlot || null,
-          durationHours: durationHours ? Number(durationHours) : (type === 'INSTANT' ? 2 : null),
-          addressId: addressId || undefined,
-          baseAmount: Number(baseAmount),
-          serviceFee,
-          gstAmount,
-          totalAmount,
-          specialInstructions: fullInstructions || null,
-        },
-      });
-    } catch (dbError) {
-      console.warn('Prisma DB connection unavailable, using fallback store:', dbError);
-    }
-
-    // 2. If DB was down or unreachable, use resilient in-memory store
-    if (!savedBooking) {
-      const generatedId = `QWK${Math.floor(100000 + Math.random() * 900000)}`;
-      const fallbackData: StoredBooking = {
-        id: generatedId,
+    const booking = await prisma.booking.create({
+      data: {
+        customerId,
         serviceId,
         serviceName,
-        type: type === 'MONTHLY' ? 'MONTHLY' : 'INSTANT',
-        status: 'CONFIRMED',
-        scheduledDate: new Date(scheduledDate).toISOString(),
-        timeSlot: timeSlot || '09:00 AM - 11:00 AM',
-        durationHours: durationHours ? Number(durationHours) : 2,
-        baseAmount,
+        type: type === 'MONTHLY' ? 'MONTHLY' : type === 'INSTANT' ? 'INSTANT' : type,
+        scheduledDate: new Date(scheduledDate),
+        timeSlot: timeSlot || null,
+        durationHours: durationHours ? Number(durationHours) : (type === 'INSTANT' ? 2 : null),
+        addressId: addressId || undefined,
+        baseAmount: Number(baseAmount),
         serviceFee,
         gstAmount,
         totalAmount,
         specialInstructions: fullInstructions,
-        createdAt: new Date().toISOString(),
-        customer: {
-          name: finalCustomerName,
-          phone: finalPhone,
-        },
-        address: address ? {
-          flatNo: address.houseNo || address.flatNo || '101',
-          street: address.street || address.area || 'Risali Sector',
-          landmark: address.landmark || '',
-          area: address.area || 'Risali Sector',
-          city: address.city || 'Bhilai',
-          pincode: address.pincode || '490006',
-        } : undefined,
-      };
+      },
+    });
 
-      addFallbackBooking(fallbackData);
-      savedBooking = fallbackData;
-    }
-
-    // 3. Trigger WhatsApp & SMS Notification
-    let notificationInfo = null;
+    // ── Send WhatsApp + SMS notifications (non-blocking) ──
     try {
-      const addressString = address 
-        ? `${address.houseNo || address.flatNo || ''}, ${address.street || address.area || ''}, ${address.city || 'Bhilai'}`
-        : 'Risali Sector, Bhilai';
-
-      notificationInfo = await sendBookingNotifications({
-        bookingId: savedBooking.id,
-        customerName: finalCustomerName,
-        customerPhone: finalPhone,
-        serviceName,
-        scheduledDate: new Date(scheduledDate).toLocaleDateString('en-IN', { dateStyle: 'medium' }),
-        timeSlot: timeSlot || undefined,
-        totalAmount,
-        addressText: addressString,
+      const customer = await prisma.user.findUnique({
+        where: { id: customerId },
+        select: { name: true, phone: true },
       });
-    } catch (notifError) {
-      console.warn('Notification non-fatal error:', notifError);
+
+      if (customer) {
+        notifyBookingCreated({
+          customerPhone: customer.phone,
+          customerName:  customer.name,
+          serviceName,
+          bookingId:     booking.id,
+          scheduledDate: format(new Date(scheduledDate), 'dd MMM yyyy'),
+          timeSlot:      timeSlot || 'TBD',
+          totalAmount:   totalAmount,
+        }).catch(err => console.error('Notification error (non-fatal):', err));
+      }
+    } catch (notifErr) {
+      console.error('Notification fetch error (non-fatal):', notifErr);
     }
 
-    return NextResponse.json({ 
-      success: true, 
-      booking: savedBooking,
-      notification: notificationInfo 
-    }, { status: 201 });
+    return NextResponse.json({ success: true, booking }, { status: 201 });
 
-  } catch (error: any) {
-    console.error('Fatal booking handler error:', error);
-    return NextResponse.json({ error: error?.message || 'Failed to process booking' }, { status: 500 });
+  } catch (error) {
+    console.error('Booking creation error:', error);
+    return NextResponse.json({ error: 'Failed to create booking in database' }, { status: 500 });
+  }
+}
+
+// PATCH /api/bookings — update booking status & notify customer
+export async function PATCH(req: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+  try {
+    const body = await req.json();
+    const { bookingId, status, cancellationReason } = body;
+
+    if (!bookingId || !status) {
+      return NextResponse.json({ error: 'bookingId and status required' }, { status: 400 });
+    }
+
+    const allowedStatuses = ['CONFIRMED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED'];
+    if (!allowedStatuses.includes(status)) {
+      return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
+    }
+
+    const booking = await prisma.booking.update({
+      where: { id: bookingId },
+      data: {
+        status,
+        ...(cancellationReason ? { cancellationReason } : {}),
+      },
+      include: {
+        customer: { select: { name: true, phone: true } },
+        helper:   { include: { user: { select: { name: true } } } },
+      },
+    });
+
+    // Send notification to customer
+    if (booking.customer) {
+      notifyBookingStatusUpdate({
+        customerPhone: booking.customer.phone,
+        customerName:  booking.customer.name,
+        serviceName:   booking.serviceName,
+        status,
+        bookingId:     booking.id,
+        helperName:    booking.helper?.user?.name,
+      }).catch(err => console.error('Status notification error (non-fatal):', err));
+    }
+
+    return NextResponse.json({ success: true, booking });
+  } catch (error) {
+    console.error('Booking status update error:', error);
+    return NextResponse.json({ error: 'Failed to update booking status' }, { status: 500 });
   }
 }

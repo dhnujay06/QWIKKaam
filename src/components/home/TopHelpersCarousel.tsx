@@ -101,7 +101,7 @@ export default function TopHelpersCarousel() {
               </div>
               
               <div className="flex flex-wrap gap-2 mb-6">
-                {helper.skills.map((skill, idx) => (
+                {helper.skills.map((skill: string, idx: number) => (
                   <span key={idx} className="px-3 py-1 bg-slate-700 text-teal-100 text-xs font-medium rounded-full">
                     {skill}
                   </span>

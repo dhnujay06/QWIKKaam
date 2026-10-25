@@ -1,36 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { sendOtpSMS } from '@/lib/notifications';
 
 // Generate a 6-digit OTP
 function generateOTP(): string {
   return Math.floor(100000 + Math.random() * 900000).toString();
-}
-
-async function sendSMSviaFast2SMS(phone: string, otp: string): Promise<boolean> {
-  const apiKey = process.env.FAST2SMS_API_KEY;
-  if (!apiKey) return false;
-
-  try {
-    const response = await fetch('https://www.fast2sms.com/dev/bulkV2', {
-      method: 'POST',
-      headers: {
-        'authorization': apiKey,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        route: 'otp',
-        variables_values: otp,
-        numbers: phone,
-      }),
-    });
-
-    const data = await response.json();
-    console.log('Fast2SMS response:', data);
-    return data.return === true;
-  } catch (err) {
-    console.error('Fast2SMS error:', err);
-    return false;
-  }
 }
 
 export async function POST(req: NextRequest) {
@@ -56,11 +30,11 @@ export async function POST(req: NextRequest) {
       data: { phone, code: otp, expiresAt },
     });
 
-    // Try to send real SMS via Fast2SMS
-    const smsSent = await sendSMSviaFast2SMS(phone, otp);
+    // Send OTP via MSG91 SMS + WhatsApp
+    const smsSent = await sendOtpSMS(phone, otp);
 
     if (smsSent) {
-      console.log(`✅ Real SMS sent to ${phone}`);
+      console.log(`✅ OTP sent to ${phone}`);
       return NextResponse.json({ success: true, message: 'OTP aapke phone par bheja gaya!' });
     }
 

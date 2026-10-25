@@ -6,7 +6,7 @@ import { signOut } from "next-auth/react";
 import { 
   Users, UserPlus, Phone, Star, Zap, LogOut, CheckCircle, 
   ShieldCheck, Package, Clock, MapPin, Calendar, AlertCircle, 
-  UserCheck, DollarSign, RefreshCw, MessageCircle 
+  UserCheck, DollarSign, RefreshCw 
 } from "lucide-react";
 
 interface Helper {
@@ -397,16 +397,7 @@ export default function AdminDashboard() {
                             className="inline-flex items-center gap-1.5 bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors shadow-sm"
                           >
                             <Phone className="w-3.5 h-3.5" />
-                            <span>Call</span>
-                          </a>
-                          <a 
-                            href={`https://wa.me/91${(b.customer?.phone || '').replace(/\D/g, '').slice(-10)}?text=${encodeURIComponent('Namaste ' + (b.customer?.name || 'Customer') + '! Qwikkaam se aapki booking #' + b.id.slice(-6).toUpperCase() + ' (' + b.serviceName + ') confirm ho chuki hai. Helper coordinate kiya ja raha hai.')}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors shadow-sm"
-                          >
-                            <MessageCircle className="w-3.5 h-3.5" />
-                            <span>WhatsApp</span>
+                            <span>Call +91 {b.customer?.phone}</span>
                           </a>
                         </div>
                       </div>

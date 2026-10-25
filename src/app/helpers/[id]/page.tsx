@@ -134,7 +134,7 @@ export default function HelperProfilePage({ params }: { params: Promise<{ id: st
                   {t('Top Skills', 'शीर्ष कौशल')}
                 </h3>
                 <div className="flex flex-wrap gap-2">
-                  {helper.skills.map(skill => (
+                  {helper.skills.map((skill: string) => (
                     <Badge key={skill} variant="secondary" className="bg-slate-100 text-slate-700 border-transparent text-sm py-1">
                       {skill}
                     </Badge>

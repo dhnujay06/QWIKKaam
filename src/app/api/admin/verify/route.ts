@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isAdminAuthorized } from "@/lib/admin-auth";
 import { prisma } from "@/lib/prisma";
+import { notifyHelperVerification } from "@/lib/notifications";
 
 // PATCH — update verification status of a helper
 export async function PATCH(req: NextRequest) {
@@ -47,6 +48,30 @@ export async function PATCH(req: NextRequest) {
       where: { userId },
       data: updateData,
     });
+
+    // Notify helper via WhatsApp + SMS (non-blocking)
+    try {
+      const helperUser = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { name: true, phone: true },
+      });
+
+      if (helperUser) {
+        const approved =
+          level === 'aadhaar' ? value === true || value === 'VERIFIED'
+          : level === 'admin' || level === 'police' || level === 'vaccinated' ? value === true
+          : false;
+
+        notifyHelperVerification({
+          helperPhone: helperUser.phone,
+          helperName:  helperUser.name,
+          level:       level as 'admin' | 'aadhaar' | 'police' | 'vaccinated',
+          approved,
+        }).catch(err => console.error('Verification notification error (non-fatal):', err));
+      }
+    } catch (notifErr) {
+      console.error('Notification fetch error (non-fatal):', notifErr);
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {
