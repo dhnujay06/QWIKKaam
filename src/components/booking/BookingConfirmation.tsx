@@ -98,10 +98,25 @@ export default function BookingConfirmation({ service, date, time, address, help
         </div>
       )}
 
+      {/* WhatsApp Updates Button */}
+      <a
+        href={`https://wa.me/?text=${encodeURIComponent(
+          `*Qwikkaam Booking Confirmed* 🎉\nService: ${service.title}\nBooking ID: ${bookingId}\nDate: ${format(date, 'dd MMM yyyy')} (${time})\nAddress: ${address}\nStatus: Confirmed`
+        )}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="w-full mb-4"
+      >
+        <button className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-medium transition-colors flex items-center justify-center gap-2 shadow-sm">
+          <span>📲</span>
+          <span>{t('Get Confirmation on WhatsApp', 'व्हाट्सएप पर रसीद पाएं')}</span>
+        </button>
+      </a>
+
       <div className="flex flex-col sm:flex-row gap-4 w-full">
-        <Link href="/bookings" className="flex-1">
+        <Link href="/dashboard" className="flex-1">
           <button className="w-full py-3 px-4 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-medium transition-colors">
-            {t('Track Booking', 'बुकिंग ट्रैक करें')}
+            {t('View Dashboard', 'डैशबोर्ड देखें')}
           </button>
         </Link>
         <Link href="/" className="flex-1">
